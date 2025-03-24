@@ -1,0 +1,12 @@
+{
+    "cmake.buildDirectory": "${workspaceFolder}/build",
+    "cmake.configureArgs": [
+        "-DCMAKE_BUILD_TYPE=Debug",
+        "-DCMAKE_EXPORT_COMPILE_COMMANDS=1"
+    ],
+    "cmake.debugConfig": {
+        "stopAtEntry": false,
+        "MIMode": "lldb"
+    },
+    "cSpell.enabled": false
+}

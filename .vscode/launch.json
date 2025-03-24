@@ -1,0 +1,38 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch VST Host (Debug)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/VST3Host_artefacts/Debug/VST3 Host.app/Contents/MacOS/VST3 Host",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "lldb",
+            "preLaunchTask": "Build Debug",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for lldb",
+                    "text": "settings set target.source-map ${workspaceFolder} ${workspaceFolder}",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
+            "name": "Launch VST Host (Release)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/VST3Host_artefacts/Release/VST3 Host.app/Contents/MacOS/VST3 Host",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "lldb",
+            "preLaunchTask": "Build Release"
+        }
+    ]
+}
