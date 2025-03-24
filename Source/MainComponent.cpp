@@ -9,8 +9,14 @@ MainComponent::MainComponent()
     
     addAndMakeVisible(keyboardComponent);
     addAndMakeVisible(loadButton);
+    addAndMakeVisible(loadPresetButton);
+    addAndMakeVisible(savePresetButton);
     
     keyboardState.addListener(this);
+    
+    loadPresetButton.onClick = [this] { loadPreset(); };
+    savePresetButton.onClick = [this] { savePreset(); };
+    
     loadButton.onClick = [this] { openPluginBrowser(); };
 
     setSize(800, 600);
@@ -71,7 +77,14 @@ void MainComponent::resized()
 {
     auto area = getLocalBounds();
     auto topBar = area.removeFromTop(30);
+    
     loadButton.setBounds(topBar.removeFromLeft(150).reduced(2));
+    auto presetButtonWidth = 100;
+    loadPresetButton.setBounds(topBar.removeFromLeft(presetButtonWidth).reduced(2));
+    savePresetButton.setBounds(topBar.removeFromLeft(presetButtonWidth).reduced(2));
+    
+    loadPresetButton.setEnabled(pluginEditor != nullptr);
+    savePresetButton.setEnabled(pluginEditor != nullptr);
     
     if (pluginEditor != nullptr) {
         pluginEditor->setBounds(area.removeFromTop(area.getHeight() - 100).reduced(8));
@@ -199,4 +212,112 @@ void MainComponent::loadPlugin(const juce::PluginDescription& description)
                 }
             });
         });
+}
+
+void MainComponent::loadPreset()
+{
+    if (auto* processor = getActiveProcessor())
+    {
+        chooser = std::make_unique<juce::FileChooser>(
+            "Load Preset",
+            juce::File{},
+            "*.vstpreset;*.preset"
+        );
+
+        chooser->launchAsync(juce::FileBrowserComponent::openMode |
+                           juce::FileBrowserComponent::canSelectFiles,
+            [this, processor](const juce::FileChooser& fc)
+            {
+                const auto file = fc.getResult();
+                if (file.exists())
+                {
+                    juce::MemoryBlock data;
+                    if (!file.loadFileAsData(data))
+                    {
+                        juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon,
+                            "Load Error", "Failed to read preset file: " + file.getFullPathName());
+                        return;
+                    }
+                    
+                    // Load the preset data
+                    processor->setStateInformation(data.getData(), static_cast<int>(data.getSize()));
+                }
+            });
+    }
+}
+
+void MainComponent::savePreset()
+{
+    if (auto* processor = getActiveProcessor())
+    {
+        chooser = std::make_unique<juce::FileChooser>(
+            "Save Preset",
+            juce::File{},
+            "*.vstpreset;*.preset"
+        );
+
+        chooser->launchAsync(juce::FileBrowserComponent::saveMode |
+                           juce::FileBrowserComponent::canSelectFiles,
+            [this, processor](const juce::FileChooser& fc)
+            {
+                auto file = fc.getResult();
+                if (file != juce::File{})
+                {
+                    // If no extension provided, default to .vstpreset
+                    if (file.getFileExtension().isEmpty())
+                        file = file.withFileExtension(".vstpreset");
+                    
+                    // Check directory exists and is writable
+                    auto directory = file.getParentDirectory();
+                    if (!directory.exists())
+                    {
+                        if (!directory.createDirectory())
+                        {
+                            juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon,
+                                "Save Error", "Cannot create directory: " + directory.getFullPathName());
+                            return;
+                        }
+                    }
+                    
+                    // Check write permissions - for existing files check the file,
+                    // for new files check the directory
+                    bool hasWriteAccess = file.exists() ? 
+                        file.hasWriteAccess() : 
+                        directory.hasWriteAccess();
+                        
+                    if (!hasWriteAccess)
+                    {
+                        juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon,
+                            "Save Error", 
+                            "No write permission for file: " + file.getFullPathName());
+                        return;
+                    }
+                    
+                    // Fallback to generic preset saving
+                    juce::MemoryBlock data;
+                    processor->getStateInformation(data);
+                    
+                    // Write the preset data
+                    if (!file.replaceWithData(data.getData(), data.getSize()))
+                    {
+                        juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon,
+                            "Save Error", "Failed to write preset file: " + file.getFullPathName());
+                    }
+                }
+            });
+    }
+}
+
+juce::AudioProcessor* MainComponent::getActiveProcessor()
+{
+    // Find the plugin node in the graph
+    for (auto* node : processorGraph.getNodes())
+    {
+        // Skip audio/MIDI IO nodes
+        if (node->getProcessor()->getName() != "Audio Input" && 
+            node->getProcessor()->getName() != "Audio Output" && 
+            node->getProcessor()->getName() != "MIDI Input")
+            return node->getProcessor();
+    }
+    return nullptr;
 }

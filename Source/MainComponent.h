@@ -23,8 +23,12 @@ private:
     void openPluginBrowser();
     void scanAndLoadPlugin(const juce::File& file);
     void loadPlugin(const juce::PluginDescription& description);
+    void loadPreset();
+    void savePreset();
+    juce::AudioProcessor* getActiveProcessor();
 
     juce::TextButton loadButton{"Load VST3 Plugin"};
+    juce::TextButton loadPresetButton{"Load Preset"}, savePresetButton{"Save Preset"};
     juce::AudioPluginFormatManager formatManager;
     juce::AudioProcessorGraph processorGraph;
     std::unique_ptr<juce::AudioProcessorEditor> pluginEditor;
