@@ -44,7 +44,6 @@ void MainComponent::getNextAudioBlock(const juce::AudioSourceChannelInfo& buffer
 
     // Get messages from the collector
     const auto timestamp = juce::Time::getMillisecondCounterHiRes();
-    const double msPerBlock = bufferToFill.numSamples * 1000.0 / processorGraph.getSampleRate();
     midiCollector.removeNextBlockOfMessages(incomingMidi, bufferToFill.numSamples);
     
     // Get messages from the keyboard state
