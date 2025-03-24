@@ -30,4 +30,26 @@ This ensures the best compiler selection for your specific platform and environm
 
 1. Open the Command Palette (Ctrl+Shift+P / Cmd+Shift+P)
 2. Run "CMake: Build"
-3. The application will be built in the `build` directory
+
+The application will be built in the `build` directory
+
+## Cleaning the Repository
+
+This repository includes scripts to clean the build and vcpkg directories.
+
+- `clean-repo.sh`: Cleans the repository on macOS/Linux.
+- `clean-repo.bat`: Cleans the repository on Windows.
+
+To use the cleaning scripts, run the appropriate script for your platform:
+
+- For macOS/Linux: `./clean-repo.sh`
+- For Windows: `clean-repo.bat`
+
+These scripts will remove the `build` and `vcpkg` directories, if they exist.
+
+## Presets
+
+This application supports loading and writing VST3 presets (.vstpreset files).
+
+- To load a preset, use the 'Load Preset' option in the File menu.
+- To save a preset, use the 'Save Preset' option in the File menu.

@@ -226,7 +226,7 @@ void MainComponent::loadPreset()
 
         chooser->launchAsync(juce::FileBrowserComponent::openMode |
                            juce::FileBrowserComponent::canSelectFiles,
-            [this, processor](const juce::FileChooser& fc)
+            [processor](const juce::FileChooser& fc)
             {
                 const auto file = fc.getResult();
                 if (file.exists())
@@ -258,7 +258,7 @@ void MainComponent::savePreset()
 
         chooser->launchAsync(juce::FileBrowserComponent::saveMode |
                            juce::FileBrowserComponent::canSelectFiles,
-            [this, processor](const juce::FileChooser& fc)
+            [processor](const juce::FileChooser& fc)
             {
                 auto file = fc.getResult();
                 if (file != juce::File{})

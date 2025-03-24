@@ -8,5 +8,6 @@
         "stopAtEntry": false,
         "MIMode": "lldb"
     },
-    "cSpell.enabled": false
+    "cSpell.enabled": false,
+    "git.ignoredRepositories": ["vcpkg"]
 }
