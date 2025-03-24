@@ -1,0 +1,6 @@
+vcpkg/
+build/
+*.user
+.vs/
+.vscode/
+.DS_Store
