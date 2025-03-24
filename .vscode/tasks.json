@@ -2,6 +2,21 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "Configure Debug",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "-DCMAKE_BUILD_TYPE=Debug",
+                "-B",
+                "${workspaceFolder}/build"
+            ],
+            "group": "build",
+            "presentation": {
+                "reveal": "silent"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
             "label": "Build Debug",
             "type": "shell",
             "command": "cmake",
@@ -15,6 +30,22 @@
                 "kind": "build",
                 "isDefault": true
             },
+            "dependsOn": ["Configure Debug"],
+            "presentation": {
+                "reveal": "silent"
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "Configure Release",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "-DCMAKE_BUILD_TYPE=Release",
+                "-B",
+                "${workspaceFolder}/build"
+            ],
+            "group": "build",
             "presentation": {
                 "reveal": "silent"
             },
@@ -31,6 +62,7 @@
                 "Release"
             ],
             "group": "build",
+            "dependsOn": ["Configure Release"],
             "presentation": {
                 "reveal": "silent"
             },
